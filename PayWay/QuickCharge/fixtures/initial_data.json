@@ -1,0 +1,32 @@
+[
+  {
+    "model": "QuickCharge.item",
+    "pk": 1,
+    "fields": {
+      "name": "Товар 1",
+      "description": "Описание товара 1",
+      "price": "9.99",
+      "currency": "USD"
+    }
+  },
+  {
+    "model": "QuickCharge.item",
+    "pk": 2,
+    "fields": {
+      "name": "Товар 2",
+      "description": "Описание товара 2",
+      "price": "19.99",
+      "currency": "EUR"
+    }
+  },
+  {
+    "model": "QuickCharge.item",
+    "pk": 3,
+    "fields": {
+      "name": "Товар 3",
+      "description": "Описание товара 3",
+      "price": "29.99",
+      "currency": "USD"
+    }
+  }
+]
