@@ -1,48 +1,59 @@
-<script src="https://js.stripe.com/v3/"></script>
-<div id="card-element">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ item.name }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>{{ item.name }}</h1>
+    <p>{{ item.description }}</p>
+    <p>Цена: {{ item.price }} {{ item.currency }}</p>
 
-</div>
-<button id="submit-button">Pay</button>
+    <!-- Элемент Stripe для ввода данных карты -->
+    <div id="card-element"></div>
+    <button id="submit-button">Pay</button>
 
-<!-- Контейнер для сообщений об успехе или ошибке платежа -->
-<div id="payment-message"></div>
+    <!-- Контейнер для сообщений об успехе или ошибке платежа -->
+    <div id="payment-message"></div>
 
-<script>
-    var stripe = Stripe('{{ stripe_public_key }}');
-    var elements = stripe.elements();
-    var card = elements.create('card');
-    card.mount('#card-element');
+    <script>
+        var stripe = Stripe('{{ stripe_public_key }}');
+        var elements = stripe.elements();
+        var card = elements.create('card');
+        card.mount('#card-element');
 
-    var submitButton = document.getElementById('submit-button');
-    var messageContainer = document.getElementById('payment-message'); // Получаем ссылку на контейнер сообщений
+        var submitButton = document.getElementById('submit-button');
+        var messageContainer = document.getElementById('payment-message'); // Получаем ссылку на контейнер сообщений
 
-    submitButton.addEventListener('click', function(event) {
-        event.preventDefault();
+        submitButton.addEventListener('click', function(event) {
+            event.preventDefault();
 
-        fetch('/buy/{{ item.id }}', {method: 'GET'})
-        .then(response => response.json())
-        .then(data => {
-            stripe.confirmCardPayment(data.clientSecret, {
-                payment_method: {
-                    card: card,
-                    billing_details: {
-                        name: 'Jenny Rosen'
+            fetch('/buy/{{ item.id }}', {method: 'GET'})
+            .then(response => response.json())
+            .then(data => {
+                stripe.confirmCardPayment(data.clientSecret, {
+                    payment_method: {
+                        card: card,
+                        billing_details: {
+                            name: 'Jenny Rosen'
+                        }
                     }
-                }
-            }).then(function(result) {
-                if (result.error) {
-                    // Вывод сообщения об ошибке в контейнер
-                    messageContainer.textContent = result.error.message;
-                    messageContainer.style.color = 'red'; // Делаем текст сообщения красным
-
-                } else {
-                    if (result.paymentIntent.status === 'succeeded') {
-                        // Обновляем страницу с сообщением об успешной оплате
-                        messageContainer.textContent = 'Платеж выполнен успешно!';
-                        messageContainer.style.color = 'green'; // Делаем текст сообщения зелёным
+                }).then(function(result) {
+                    if (result.error) {
+                        // Вывод сообщения об ошибке в контейнер
+                        messageContainer.textContent = result.error.message;
+                        messageContainer.style.color = 'red';
+                    } else {
+                        if (result.paymentIntent.status === 'succeeded') {
+                            // Обновляем страницу с сообщением об успешной оплате
+                            messageContainer.textContent = 'Платеж выполнен успешно!';
+                            messageContainer.style.color = 'green';
+                        }
                     }
-                }
+                });
             });
         });
-    });
-</script>
+    </script>
+</body>
+</html>
